@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-unslop",
+  "name": "Unslop",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Detect and fix AI writing patterns — clichés, passive voice, corporate jargon, and more.",
+  "author": "Matt",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}
