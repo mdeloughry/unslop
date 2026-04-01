@@ -588,10 +588,9 @@ function detectCustomRules(text, rules) {
     const re = new RegExp(`\\b${escapeRegex6(rule.phrase.trim())}\\b`, "gi");
     let m;
     while ((m = re.exec(text)) !== null) {
-      const catId = rule.categoryId;
       findings.push({
-        categoryId: catId,
-        categoryLabel: (_a = CATEGORY_LABELS[catId]) != null ? _a : "Custom Rules",
+        categoryId: rule.categoryId,
+        categoryLabel: (_a = CATEGORY_LABELS[rule.categoryId]) != null ? _a : "Custom Rules",
         text: m[0],
         from: m.index,
         to: m.index + m[0].length,
@@ -1077,7 +1076,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
       rewriteBtn.setAttribute("aria-label", "AI rewrite paragraph");
       this.registerDomEvent(rewriteBtn, "click", (e) => {
         e.stopPropagation();
-        this.handleRewrite(item, f);
+        void this.handleRewrite(item, f);
       });
     }
     if (f.suggestion) {
@@ -1215,7 +1214,6 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    new import_obsidian3.Setting(containerEl).setName("Unslop").setHeading();
     new import_obsidian3.Setting(containerEl).setName("Prompt export").setHeading();
     new import_obsidian3.Setting(containerEl).setName("AI prompt mode").setDesc(
       "Include the full document content (recommended \u2014 works with any AI) or just the file path (only if your AI agent can read your local filesystem)."
@@ -1225,7 +1223,7 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian3.Setting(containerEl).setName("AI provider (inline rewrites)").setDesc('Configure an AI provider to use the "Rewrite" button in the side panel.').setHeading();
+    new import_obsidian3.Setting(containerEl).setName("AI provider (inline rewrites)").setDesc("Configure an AI provider to use the rewrite button in the side panel.").setHeading();
     let modelTextComp;
     new import_obsidian3.Setting(containerEl).setName("Provider").addDropdown((drop) => {
       for (const [value, label] of Object.entries(PROVIDER_LABELS)) {
@@ -1279,7 +1277,7 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
     new import_obsidian3.Setting(containerEl).setName("Custom rules").setDesc("Add your own phrases to flag. They will appear in the side panel alongside built-in findings.").setHeading();
     this.renderCustomRules(containerEl);
     new import_obsidian3.Setting(containerEl).addButton(
-      (btn) => btn.setButtonText("+ Add rule").setCta().onClick(async () => {
+      (btn) => btn.setButtonText("+ add rule").setCta().onClick(async () => {
         this.plugin.settings.customRules.push({
           id: crypto.randomUUID(),
           phrase: "",
@@ -1334,7 +1332,7 @@ var UnslopPlugin = class extends import_obsidian4.Plugin {
       id: "analyze-note",
       name: "Analyze note",
       editorCallback: (editor, view) => {
-        this.runAnalysis(editor, view);
+        void this.runAnalysis(editor, view);
       }
     });
     this.addCommand({
@@ -1348,7 +1346,7 @@ var UnslopPlugin = class extends import_obsidian4.Plugin {
     });
     this.addSettingTab(new UnslopSettingTab(this.app, this));
   }
-  async onunload() {
+  onunload() {
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -1395,7 +1393,7 @@ var UnslopPlugin = class extends import_obsidian4.Plugin {
     if (!leaf)
       return null;
     await leaf.setViewState({ type: VIEW_TYPE_UNSLOP, active: true });
-    this.app.workspace.revealLeaf(leaf);
+    await this.app.workspace.revealLeaf(leaf);
     return this.getUnslopView();
   }
   getUnslopView() {
@@ -1407,6 +1405,8 @@ var UnslopPlugin = class extends import_obsidian4.Plugin {
   }
   // ── CodeMirror helpers ─────────────────────────────────────────────────────
   getCmView(mdView) {
-    return mdView.editor.cm;
+    var _a;
+    const editor = mdView.editor;
+    return (_a = editor.cm) != null ? _a : null;
   }
 };

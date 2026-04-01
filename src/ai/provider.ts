@@ -37,6 +37,24 @@ export const PROVIDER_DOCS: Record<AIProviderName, string> = {
   openrouter: 'https://openrouter.ai/keys',
 };
 
+// ── Response types ────────────────────────────────────────────────────────
+
+interface OpenAIResponse {
+  choices?: Array<{ message?: { content?: string } }>;
+}
+
+interface AnthropicResponse {
+  content?: Array<{ text?: string }>;
+}
+
+interface GeminiResponse {
+  candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+}
+
+interface CohereResponse {
+  message?: { content?: Array<{ text?: string }> };
+}
+
 // ── Request helpers ────────────────────────────────────────────────────────
 
 /** Call an OpenAI-compatible chat completions endpoint. */
@@ -67,7 +85,7 @@ async function openAICompletions(
     }),
   });
 
-  const data = res.json;
+  const data = res.json as OpenAIResponse;
   const content = data?.choices?.[0]?.message?.content;
   if (!content) throw new Error(`Unexpected response from API: ${JSON.stringify(data)}`);
   return content.trim();
@@ -96,7 +114,7 @@ async function anthropicMessages(
     }),
   });
 
-  const data = res.json;
+  const data = res.json as AnthropicResponse;
   const content = data?.content?.[0]?.text;
   if (!content) throw new Error(`Unexpected Anthropic response: ${JSON.stringify(data)}`);
   return content.trim();
@@ -121,7 +139,7 @@ async function googleGemini(
     }),
   });
 
-  const data = res.json;
+  const data = res.json as GeminiResponse;
   const content = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!content) throw new Error(`Unexpected Gemini response: ${JSON.stringify(data)}`);
   return content.trim();
@@ -150,7 +168,7 @@ async function cohereChat(
     }),
   });
 
-  const data = res.json;
+  const data = res.json as CohereResponse;
   const content = data?.message?.content?.[0]?.text;
   if (!content) throw new Error(`Unexpected Cohere response: ${JSON.stringify(data)}`);
   return content.trim();
@@ -199,7 +217,7 @@ export async function callAI(
       );
 
     default:
-      throw new Error(`Unknown AI provider: ${provider}`);
+      throw new Error(`Unknown AI provider: ${provider as string}`);
   }
 }
 

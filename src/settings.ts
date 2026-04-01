@@ -34,8 +34,6 @@ export class UnslopSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    new Setting(containerEl).setName('Unslop').setHeading();
-
     // ── Prompt export ──────────────────────────────────────────────────────
     new Setting(containerEl).setName('Prompt export').setHeading();
 
@@ -59,10 +57,10 @@ export class UnslopSettingTab extends PluginSettingTab {
     // ── AI provider ────────────────────────────────────────────────────────
     new Setting(containerEl)
       .setName('AI provider (inline rewrites)')
-      .setDesc('Configure an AI provider to use the "Rewrite" button in the side panel.')
+      .setDesc('Configure an AI provider to use the rewrite button in the side panel.')
       .setHeading();
 
-    let modelTextComp: TextComponent;
+    let modelTextComp: TextComponent | undefined;
 
     new Setting(containerEl)
       .setName('Provider')
@@ -98,7 +96,7 @@ export class UnslopSettingTab extends PluginSettingTab {
       }))
       .addText(text => {
         text
-          .setPlaceholder('sk-...')
+          .setPlaceholder('sk-...') // eslint-disable-line obsidianmd/ui/sentence-case -- API key format, not prose
           .setValue(this.plugin.settings.aiApiKey)
           .onChange(async (value) => {
             this.plugin.settings.aiApiKey = value.trim();
@@ -129,7 +127,7 @@ export class UnslopSettingTab extends PluginSettingTab {
         .setDesc('Override the API base URL — useful for proxies or self-hosted models.')
         .addText(text => {
           text
-            .setPlaceholder('https://...')
+            .setPlaceholder('https://...') // eslint-disable-line obsidianmd/ui/sentence-case -- URL format, not prose
             .setValue(this.plugin.settings.aiBaseUrl)
             .onChange(async (value) => {
               this.plugin.settings.aiBaseUrl = value.trim();
@@ -149,7 +147,7 @@ export class UnslopSettingTab extends PluginSettingTab {
 
     new Setting(containerEl).addButton((btn: ButtonComponent) =>
       btn
-        .setButtonText('+ Add rule')
+        .setButtonText('+ add rule')
         .setCta()
         .onClick(async () => {
           this.plugin.settings.customRules.push({

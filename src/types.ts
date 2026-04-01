@@ -47,7 +47,7 @@ export interface CustomRule {
 }
 
 export interface Finding {
-  categoryId: CategoryId;
+  categoryId: CategoryId | 'custom';
   categoryLabel: string;
   text: string;
   from: number;

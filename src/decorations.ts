@@ -52,7 +52,7 @@ const unslopField = StateField.define<DecorationSet>({
     return deco;
   },
 
-  provide: f => EditorView.decorations.from(f as any),
+  provide: f => EditorView.decorations.from(f),
 });
 
 export function buildUnslopExtension(): Extension {

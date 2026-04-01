@@ -65,7 +65,7 @@ export class UnslopView extends ItemView {
   private renderEmpty(): void {
     this.contentEl2.empty();
     const empty = this.contentEl2.createDiv({ cls: 'unslop-empty' });
-    empty.createEl('p', { text: 'Run "Unslop: Analyze note" to scan the active document.' });
+    empty.createEl('p', { text: 'Run "Unslop: Analyze note" to scan the active document.' }); // eslint-disable-line obsidianmd/ui/sentence-case -- quoting the command name
   }
 
   private renderResult(): void {
@@ -97,7 +97,7 @@ export class UnslopView extends ItemView {
     // ── No findings ───────────────────────────────────────────────────────
     if (result.findings.length === 0) {
       this.contentEl2.createDiv({ cls: 'unslop-empty' })
-        .createEl('p', { text: '✓ No issues found.' });
+        .createEl('p', { text: '✓ No issues found.' }); // eslint-disable-line obsidianmd/ui/sentence-case -- starts after a symbol
       return;
     }
 
@@ -163,7 +163,7 @@ export class UnslopView extends ItemView {
       rewriteBtn.setAttribute('aria-label', 'AI rewrite paragraph');
       this.registerDomEvent(rewriteBtn, 'click', (e) => {
         e.stopPropagation();
-        this.handleRewrite(item, f);
+        void this.handleRewrite(item, f);
       });
     }
 

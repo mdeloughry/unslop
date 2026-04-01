@@ -1,4 +1,4 @@
-import { Plugin, MarkdownView, WorkspaceLeaf, Editor } from 'obsidian';
+import { Plugin, MarkdownView, Editor } from 'obsidian';
 import { EditorView } from '@codemirror/view';
 import { analyze } from './analyzer';
 import { buildUnslopExtension, setUnslopFindings, clearUnslopFindings } from './decorations';
@@ -19,7 +19,7 @@ export default class UnslopPlugin extends Plugin {
       id: 'analyze-note',
       name: 'Analyze note',
       editorCallback: (editor: Editor, view: MarkdownView) => {
-        this.runAnalysis(editor, view);
+        void this.runAnalysis(editor, view);
       },
     });
 
@@ -35,10 +35,10 @@ export default class UnslopPlugin extends Plugin {
     this.addSettingTab(new UnslopSettingTab(this.app, this));
   }
 
-  async onunload(): Promise<void> {}
+  onunload(): void {}
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<UnslopSettings>);
   }
 
   async saveSettings(): Promise<void> {
@@ -93,7 +93,7 @@ export default class UnslopPlugin extends Plugin {
     const leaf = this.app.workspace.getRightLeaf(false);
     if (!leaf) return null;
     await leaf.setViewState({ type: VIEW_TYPE_UNSLOP, active: true });
-    this.app.workspace.revealLeaf(leaf);
+    await this.app.workspace.revealLeaf(leaf);
     return this.getUnslopView();
   }
 
@@ -107,8 +107,8 @@ export default class UnslopPlugin extends Plugin {
   // ── CodeMirror helpers ─────────────────────────────────────────────────────
 
   private getCmView(mdView: MarkdownView): EditorView | null {
-    // Obsidian exposes the CM6 EditorView on the editor's cm property
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (mdView.editor as any).cm as EditorView | null;
+    // Obsidian exposes the CM6 EditorView on the editor's undocumented cm property
+    const editor = mdView.editor as unknown as { cm?: EditorView };
+    return editor.cm ?? null;
   }
 }

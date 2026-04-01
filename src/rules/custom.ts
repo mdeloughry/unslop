@@ -13,10 +13,9 @@ export function detectCustomRules(text: string, rules: CustomRule[]): Finding[] 
     const re = new RegExp(`\\b${escapeRegex(rule.phrase.trim())}\\b`, 'gi');
     let m: RegExpExecArray | null;
     while ((m = re.exec(text)) !== null) {
-      const catId = rule.categoryId;
       findings.push({
-        categoryId: catId as any,
-        categoryLabel: CATEGORY_LABELS[catId] ?? 'Custom Rules',
+        categoryId: rule.categoryId,
+        categoryLabel: CATEGORY_LABELS[rule.categoryId] ?? 'Custom Rules',
         text: m[0],
         from: m.index,
         to: m.index + m[0].length,
