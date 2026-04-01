@@ -1,8 +1,8 @@
 # Unslop — Obsidian Plugin
 
-Detect and remove AI writing patterns from your notes. Flags clichés, corporate jargon, passive voice, fake enthusiasm, and more — with inline highlights, a scored side panel, and optional AI-powered rewrites.
+Detect and fix AI writing patterns — clichés, passive voice, corporate jargon, and more.
 
-![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22obsidian-unslop%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2FHEAD%2Fcommunity-plugin-stats.json)
+![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22unslop%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2FHEAD%2Fcommunity-plugin-stats.json)
 
 ---
 
@@ -48,7 +48,7 @@ All rules skip **code blocks** (fenced and inline) automatically.
 ### Manual install
 
 1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](../../releases/latest)
-2. Copy them into `<your-vault>/.obsidian/plugins/obsidian-unslop/`
+2. Copy them into `<your-vault>/.obsidian/plugins/unslop/`
 3. Enable the plugin in **Settings → Community Plugins**
 
 ### Via BRAT (beta testing)
@@ -134,7 +134,7 @@ To test in Obsidian, symlink the project folder into your vault:
 
 ```bash
 ln -s /path/to/obsidian-unslop \
-  /path/to/vault/.obsidian/plugins/obsidian-unslop
+  /path/to/vault/.obsidian/plugins/unslop
 ```
 
 Then enable the plugin in Settings and use **Reload app without saving** (Ctrl/Cmd+R) after each build.
