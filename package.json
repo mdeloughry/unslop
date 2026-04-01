@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-unslop",
+  "name": "unslop",
   "version": "1.0.0",
   "description": "Detect and fix AI writing patterns in Obsidian",
   "main": "main.js",
