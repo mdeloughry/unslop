@@ -35,9 +35,7 @@ export default class UnslopPlugin extends Plugin {
     this.addSettingTab(new UnslopSettingTab(this.app, this));
   }
 
-  async onunload(): Promise<void> {
-    this.app.workspace.detachLeavesOfType(VIEW_TYPE_UNSLOP);
-  }
+  async onunload(): Promise<void> {}
 
   async loadSettings(): Promise<void> {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -49,7 +47,7 @@ export default class UnslopPlugin extends Plugin {
 
   // ── Core analysis ──────────────────────────────────────────────────────────
 
-  private runAnalysis(editor: Editor, mdView: MarkdownView): void {
+  private async runAnalysis(editor: Editor, mdView: MarkdownView): Promise<void> {
     const hasSelection = editor.somethingSelected();
     let text: string;
     let offset = 0;
@@ -71,11 +69,10 @@ export default class UnslopPlugin extends Plugin {
     }
 
     // Show / update the side panel
-    this.openUnslopView().then(unslopView => {
-      const filePath = mdView.file?.path ?? '';
-      const fullContent = hasSelection ? text : editor.getValue();
-      unslopView?.showResult(result, fullContent, filePath);
-    });
+    const unslopView = await this.openUnslopView();
+    const filePath = mdView.file?.path ?? '';
+    const fullContent = hasSelection ? text : editor.getValue();
+    unslopView?.showResult(result, fullContent, filePath);
   }
 
   clearDecorations(editor?: Editor): void {

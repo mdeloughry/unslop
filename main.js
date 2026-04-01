@@ -953,7 +953,7 @@ var SCORE_LABELS = [
   { max: 20, label: "Clean", cls: "unslop-score-clean" },
   { max: 50, label: "Mild", cls: "unslop-score-mild" },
   { max: 75, label: "Sloppy", cls: "unslop-score-sloppy" },
-  { max: 101, label: "Very Sloppy", cls: "unslop-score-heavy" }
+  { max: 101, label: "Very sloppy", cls: "unslop-score-heavy" }
 ];
 function getParagraphAt(text, pos) {
   let from = text.lastIndexOf("\n\n", pos);
@@ -1021,7 +1021,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
     const toolbar = this.contentEl2.createDiv({ cls: "unslop-toolbar" });
     this.renderPromptButton(toolbar);
     const clearBtn = toolbar.createEl("button", { cls: "unslop-btn-ghost", text: "Clear" });
-    clearBtn.addEventListener("click", () => {
+    this.registerDomEvent(clearBtn, "click", () => {
       this.plugin.clearDecorations();
       this.clearResult();
     });
@@ -1047,7 +1047,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
       const chevron = sectionHeader.createSpan({ cls: "unslop-chevron" });
       (0, import_obsidian2.setIcon)(chevron, "chevron-down");
       const body = section.createDiv({ cls: "unslop-section-body" });
-      sectionHeader.addEventListener("click", () => {
+      this.registerDomEvent(sectionHeader, "click", () => {
         const collapsed = body.hasClass("unslop-collapsed");
         body.toggleClass("unslop-collapsed", !collapsed);
         chevron.empty();
@@ -1067,7 +1067,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
     const jumpBtn = chip.createEl("button", { cls: "unslop-icon-btn" });
     (0, import_obsidian2.setIcon)(jumpBtn, "arrow-right");
     jumpBtn.setAttribute("aria-label", "Jump to location");
-    jumpBtn.addEventListener("click", (e) => {
+    this.registerDomEvent(jumpBtn, "click", (e) => {
       e.stopPropagation();
       this.jumpTo(f.from + result.offset, f.to + result.offset);
     });
@@ -1075,7 +1075,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
       const rewriteBtn = chip.createEl("button", { cls: "unslop-icon-btn unslop-rewrite-btn" });
       (0, import_obsidian2.setIcon)(rewriteBtn, "wand");
       rewriteBtn.setAttribute("aria-label", "AI rewrite paragraph");
-      rewriteBtn.addEventListener("click", (e) => {
+      this.registerDomEvent(rewriteBtn, "click", (e) => {
         e.stopPropagation();
         this.handleRewrite(item, f);
       });
@@ -1108,27 +1108,26 @@ var UnslopView = class extends import_obsidian2.ItemView {
       spinner.remove();
       area.createEl("p", { cls: "unslop-rewrite-error", text: `Error: ${err.message}` });
       const dismiss = area.createEl("button", { cls: "unslop-btn-ghost", text: "Dismiss" });
-      dismiss.addEventListener("click", () => area.remove());
+      this.registerDomEvent(dismiss, "click", () => area.remove());
     }
   }
   renderRewritePreview(area, para, rewritten) {
     area.createEl("p", { cls: "unslop-rewrite-label", text: "Suggested rewrite:" });
-    const preview = area.createEl("blockquote", { cls: "unslop-rewrite-preview", text: rewritten });
-    preview.style.cssText = "white-space: pre-wrap; margin: 0; padding: 8px; border-left: 3px solid var(--interactive-accent); font-size: var(--font-ui-smaller); color: var(--text-normal); background: var(--background-secondary); border-radius: 0 4px 4px 0;";
+    area.createEl("blockquote", { cls: "unslop-rewrite-preview", text: rewritten });
     const actions = area.createDiv({ cls: "unslop-rewrite-actions" });
     const acceptBtn = actions.createEl("button", { cls: "unslop-btn-primary", text: "Accept" });
-    acceptBtn.addEventListener("click", () => {
+    this.registerDomEvent(acceptBtn, "click", () => {
       this.applyRewrite(para, rewritten);
       area.remove();
       new import_obsidian2.Notice("Rewrite applied");
     });
     const copyBtn = actions.createEl("button", { cls: "unslop-btn-ghost", text: "Copy" });
-    copyBtn.addEventListener("click", async () => {
+    this.registerDomEvent(copyBtn, "click", async () => {
       await navigator.clipboard.writeText(rewritten);
       new import_obsidian2.Notice("Copied to clipboard");
     });
     const dismissBtn = actions.createEl("button", { cls: "unslop-btn-ghost", text: "Dismiss" });
-    dismissBtn.addEventListener("click", () => area.remove());
+    this.registerDomEvent(dismissBtn, "click", () => area.remove());
   }
   applyRewrite(para, rewritten) {
     const leaf = this.app.workspace.getMostRecentLeaf();
@@ -1146,10 +1145,10 @@ var UnslopView = class extends import_obsidian2.ItemView {
     const btn = wrap.createEl("button", { cls: "unslop-btn-primary" });
     (0, import_obsidian2.setIcon)(btn.createSpan(), "clipboard-copy");
     btn.createSpan({ text: " Copy AI prompt" });
-    btn.addEventListener("click", () => this.copyPrompt());
+    this.registerDomEvent(btn, "click", () => this.copyPrompt());
     const toggle = wrap.createDiv({ cls: "unslop-mode-toggle" });
     const modes = [
-      { value: "content", label: "Content", title: "Embed document text in the prompt (Recommended)" },
+      { value: "content", label: "Content", title: "Embed document text in the prompt (recommended)" },
       { value: "path", label: "Path", title: "Include file path only" }
     ];
     const render = () => {
@@ -1160,7 +1159,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
           text: label,
           title
         });
-        opt.addEventListener("click", async () => {
+        this.registerDomEvent(opt, "click", async () => {
           this.plugin.settings.promptMode = value;
           await this.plugin.saveSettings();
           render();
@@ -1216,21 +1215,17 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Unslop" });
-    containerEl.createEl("h3", { text: "Prompt export" });
+    new import_obsidian3.Setting(containerEl).setName("Unslop").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Prompt export").setHeading();
     new import_obsidian3.Setting(containerEl).setName("AI prompt mode").setDesc(
       "Include the full document content (recommended \u2014 works with any AI) or just the file path (only if your AI agent can read your local filesystem)."
     ).addDropdown(
-      (drop) => drop.addOption("content", "Include content (Recommended)").addOption("path", "Link to file path").setValue(this.plugin.settings.promptMode).onChange(async (value) => {
+      (drop) => drop.addOption("content", "Include content (recommended)").addOption("path", "Link to file path").setValue(this.plugin.settings.promptMode).onChange(async (value) => {
         this.plugin.settings.promptMode = value;
         await this.plugin.saveSettings();
       })
     );
-    containerEl.createEl("h3", { text: "AI provider (inline rewrites)" });
-    containerEl.createEl("p", {
-      text: 'Configure an AI provider to use the "Rewrite" button in the side panel.',
-      cls: "setting-item-description"
-    });
+    new import_obsidian3.Setting(containerEl).setName("AI provider (inline rewrites)").setDesc('Configure an AI provider to use the "Rewrite" button in the side panel.').setHeading();
     let modelTextComp;
     new import_obsidian3.Setting(containerEl).setName("Provider").addDropdown((drop) => {
       for (const [value, label] of Object.entries(PROVIDER_LABELS)) {
@@ -1262,7 +1257,7 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
         await this.plugin.saveSettings();
       });
       text.inputEl.type = "password";
-      text.inputEl.style.width = "100%";
+      text.inputEl.addClass("unslop-input-full");
     });
     new import_obsidian3.Setting(containerEl).setName("Model").setDesc(`Default: ${DEFAULT_MODELS[selectedProvider]}`).addText((text) => {
       modelTextComp = text;
@@ -1270,7 +1265,7 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
         this.plugin.settings.aiModel = value.trim() || DEFAULT_MODELS[selectedProvider];
         await this.plugin.saveSettings();
       });
-      text.inputEl.style.width = "100%";
+      text.inputEl.addClass("unslop-input-full");
     });
     if (selectedProvider === "openrouter" || selectedProvider === "mistral" || selectedProvider === "openai") {
       new import_obsidian3.Setting(containerEl).setName("Base URL (optional)").setDesc("Override the API base URL \u2014 useful for proxies or self-hosted models.").addText((text) => {
@@ -1278,14 +1273,10 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
           this.plugin.settings.aiBaseUrl = value.trim();
           await this.plugin.saveSettings();
         });
-        text.inputEl.style.width = "100%";
+        text.inputEl.addClass("unslop-input-full");
       });
     }
-    containerEl.createEl("h3", { text: "Custom rules" });
-    containerEl.createEl("p", {
-      text: "Add your own phrases to flag. They will appear in the side panel alongside built-in findings.",
-      cls: "setting-item-description"
-    });
+    new import_obsidian3.Setting(containerEl).setName("Custom rules").setDesc("Add your own phrases to flag. They will appear in the side panel alongside built-in findings.").setHeading();
     this.renderCustomRules(containerEl);
     new import_obsidian3.Setting(containerEl).addButton(
       (btn) => btn.setButtonText("+ Add rule").setCta().onClick(async () => {
@@ -1328,8 +1319,7 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
           this.display();
         })
       );
-      setting.settingEl.style.flexWrap = "wrap";
-      setting.settingEl.style.gap = "6px";
+      setting.settingEl.addClass("unslop-rule-setting");
     }
   }
 };
@@ -1359,7 +1349,6 @@ var UnslopPlugin = class extends import_obsidian4.Plugin {
     this.addSettingTab(new UnslopSettingTab(this.app, this));
   }
   async onunload() {
-    this.app.workspace.detachLeavesOfType(VIEW_TYPE_UNSLOP);
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -1368,7 +1357,8 @@ var UnslopPlugin = class extends import_obsidian4.Plugin {
     await this.saveData(this.settings);
   }
   // ── Core analysis ──────────────────────────────────────────────────────────
-  runAnalysis(editor, mdView) {
+  async runAnalysis(editor, mdView) {
+    var _a, _b;
     const hasSelection = editor.somethingSelected();
     let text;
     let offset = 0;
@@ -1384,12 +1374,10 @@ var UnslopPlugin = class extends import_obsidian4.Plugin {
     if (cmView) {
       cmView.dispatch({ effects: setUnslopFindings.of({ result }) });
     }
-    this.openUnslopView().then((unslopView) => {
-      var _a, _b;
-      const filePath = (_b = (_a = mdView.file) == null ? void 0 : _a.path) != null ? _b : "";
-      const fullContent = hasSelection ? text : editor.getValue();
-      unslopView == null ? void 0 : unslopView.showResult(result, fullContent, filePath);
-    });
+    const unslopView = await this.openUnslopView();
+    const filePath = (_b = (_a = mdView.file) == null ? void 0 : _a.path) != null ? _b : "";
+    const fullContent = hasSelection ? text : editor.getValue();
+    unslopView == null ? void 0 : unslopView.showResult(result, fullContent, filePath);
   }
   clearDecorations(editor) {
     const mdView = editor ? this.app.workspace.getActiveViewOfType(import_obsidian4.MarkdownView) : this.app.workspace.getActiveViewOfType(import_obsidian4.MarkdownView);

@@ -71,11 +71,13 @@ All rules skip **code blocks** (fenced and inline) automatically.
 
 ---
 
-## AI features
+## AI features (optional)
+
+> **Network disclosure:** The AI rewrite feature sends paragraph text from your notes to a third-party AI provider you configure (OpenAI, Anthropic, Google, Mistral, Cohere, or OpenRouter). This only happens when you explicitly click the 🪄 rewrite button. No data is sent automatically — the plugin never contacts any remote service unless you opt in by configuring an API key and triggering a rewrite. All other features (analysis, highlighting, scoring, prompt copying) run entirely offline.
 
 ### Copy AI prompt
 
-Builds a structured prompt containing all detected issues and your document text (or file path). Paste it into any AI assistant (ChatGPT, Claude, Gemini, etc.).
+Builds a structured prompt containing all detected issues and your document text (or file path). Paste it into any AI assistant (ChatGPT, Claude, Gemini, etc.). This is copied to your clipboard — nothing is sent over the network.
 
 **Prompt modes** (toggle in the panel or in settings):
 - **Content** *(recommended)* — embeds the full document text, works with any AI
@@ -101,6 +103,8 @@ Once configured, a 🪄 button appears next to each finding. Clicking it:
 2. Sends it to the AI with all findings in that paragraph as context
 3. Shows the suggested rewrite in the panel
 4. **Accept** replaces the text in your editor · **Copy** copies it · **Dismiss** discards it
+
+Your note content is sent directly to the provider's API using your own API key. The plugin does not proxy, store, or log any data. Refer to your chosen provider's privacy policy for how they handle API requests.
 
 ---
 

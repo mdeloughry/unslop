@@ -10,7 +10,7 @@ const SCORE_LABELS: Array<{ max: number; label: string; cls: string }> = [
   { max: 20,  label: 'Clean',       cls: 'unslop-score-clean'    },
   { max: 50,  label: 'Mild',        cls: 'unslop-score-mild'     },
   { max: 75,  label: 'Sloppy',      cls: 'unslop-score-sloppy'   },
-  { max: 101, label: 'Very Sloppy', cls: 'unslop-score-heavy'    },
+  { max: 101, label: 'Very sloppy', cls: 'unslop-score-heavy'    },
 ];
 
 /** Return the paragraph (text between blank lines) that contains `pos`. */
@@ -89,7 +89,7 @@ export class UnslopView extends ItemView {
     this.renderPromptButton(toolbar);
 
     const clearBtn = toolbar.createEl('button', { cls: 'unslop-btn-ghost', text: 'Clear' });
-    clearBtn.addEventListener('click', () => {
+    this.registerDomEvent(clearBtn, 'click', () => {
       this.plugin.clearDecorations();
       this.clearResult();
     });
@@ -125,7 +125,7 @@ export class UnslopView extends ItemView {
 
       const body = section.createDiv({ cls: 'unslop-section-body' });
 
-      sectionHeader.addEventListener('click', () => {
+      this.registerDomEvent(sectionHeader, 'click', () => {
         const collapsed = body.hasClass('unslop-collapsed');
         body.toggleClass('unslop-collapsed', !collapsed);
         chevron.empty();
@@ -151,7 +151,7 @@ export class UnslopView extends ItemView {
     const jumpBtn = chip.createEl('button', { cls: 'unslop-icon-btn' });
     setIcon(jumpBtn, 'arrow-right');
     jumpBtn.setAttribute('aria-label', 'Jump to location');
-    jumpBtn.addEventListener('click', (e) => {
+    this.registerDomEvent(jumpBtn, 'click', (e) => {
       e.stopPropagation();
       this.jumpTo(f.from + result.offset, f.to + result.offset);
     });
@@ -161,7 +161,7 @@ export class UnslopView extends ItemView {
       const rewriteBtn = chip.createEl('button', { cls: 'unslop-icon-btn unslop-rewrite-btn' });
       setIcon(rewriteBtn, 'wand');
       rewriteBtn.setAttribute('aria-label', 'AI rewrite paragraph');
-      rewriteBtn.addEventListener('click', (e) => {
+      this.registerDomEvent(rewriteBtn, 'click', (e) => {
         e.stopPropagation();
         this.handleRewrite(item, f);
       });
@@ -206,7 +206,7 @@ export class UnslopView extends ItemView {
       spinner.remove();
       area.createEl('p', { cls: 'unslop-rewrite-error', text: `Error: ${(err as Error).message}` });
       const dismiss = area.createEl('button', { cls: 'unslop-btn-ghost', text: 'Dismiss' });
-      dismiss.addEventListener('click', () => area.remove());
+      this.registerDomEvent(dismiss, 'click', () => area.remove());
     }
   }
 
@@ -217,26 +217,25 @@ export class UnslopView extends ItemView {
   ): void {
     area.createEl('p', { cls: 'unslop-rewrite-label', text: 'Suggested rewrite:' });
 
-    const preview = area.createEl('blockquote', { cls: 'unslop-rewrite-preview', text: rewritten });
-    preview.style.cssText = 'white-space: pre-wrap; margin: 0; padding: 8px; border-left: 3px solid var(--interactive-accent); font-size: var(--font-ui-smaller); color: var(--text-normal); background: var(--background-secondary); border-radius: 0 4px 4px 0;';
+    area.createEl('blockquote', { cls: 'unslop-rewrite-preview', text: rewritten });
 
     const actions = area.createDiv({ cls: 'unslop-rewrite-actions' });
 
     const acceptBtn = actions.createEl('button', { cls: 'unslop-btn-primary', text: 'Accept' });
-    acceptBtn.addEventListener('click', () => {
+    this.registerDomEvent(acceptBtn, 'click', () => {
       this.applyRewrite(para, rewritten);
       area.remove();
       new Notice('Rewrite applied');
     });
 
     const copyBtn = actions.createEl('button', { cls: 'unslop-btn-ghost', text: 'Copy' });
-    copyBtn.addEventListener('click', async () => {
+    this.registerDomEvent(copyBtn, 'click', async () => {
       await navigator.clipboard.writeText(rewritten);
       new Notice('Copied to clipboard');
     });
 
     const dismissBtn = actions.createEl('button', { cls: 'unslop-btn-ghost', text: 'Dismiss' });
-    dismissBtn.addEventListener('click', () => area.remove());
+    this.registerDomEvent(dismissBtn, 'click', () => area.remove());
   }
 
   private applyRewrite(para: { from: number; to: number }, rewritten: string): void {
@@ -257,11 +256,11 @@ export class UnslopView extends ItemView {
     const btn = wrap.createEl('button', { cls: 'unslop-btn-primary' });
     setIcon(btn.createSpan(), 'clipboard-copy');
     btn.createSpan({ text: ' Copy AI prompt' });
-    btn.addEventListener('click', () => this.copyPrompt());
+    this.registerDomEvent(btn, 'click', () => this.copyPrompt());
 
     const toggle = wrap.createDiv({ cls: 'unslop-mode-toggle' });
     const modes: Array<{ value: PromptMode; label: string; title: string }> = [
-      { value: 'content', label: 'Content', title: 'Embed document text in the prompt (Recommended)' },
+      { value: 'content', label: 'Content', title: 'Embed document text in the prompt (recommended)' },
       { value: 'path',    label: 'Path',    title: 'Include file path only' },
     ];
 
@@ -272,7 +271,7 @@ export class UnslopView extends ItemView {
           cls: `unslop-mode-opt ${this.plugin.settings.promptMode === value ? 'is-active' : ''}`,
           text: label, title,
         });
-        opt.addEventListener('click', async () => {
+        this.registerDomEvent(opt, 'click', async () => {
           this.plugin.settings.promptMode = value;
           await this.plugin.saveSettings();
           render();

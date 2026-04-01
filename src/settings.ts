@@ -34,10 +34,10 @@ export class UnslopSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Unslop' });
+    new Setting(containerEl).setName('Unslop').setHeading();
 
     // ── Prompt export ──────────────────────────────────────────────────────
-    containerEl.createEl('h3', { text: 'Prompt export' });
+    new Setting(containerEl).setName('Prompt export').setHeading();
 
     new Setting(containerEl)
       .setName('AI prompt mode')
@@ -47,7 +47,7 @@ export class UnslopSettingTab extends PluginSettingTab {
       )
       .addDropdown(drop =>
         drop
-          .addOption('content', 'Include content (Recommended)')
+          .addOption('content', 'Include content (recommended)')
           .addOption('path', 'Link to file path')
           .setValue(this.plugin.settings.promptMode)
           .onChange(async (value) => {
@@ -57,11 +57,10 @@ export class UnslopSettingTab extends PluginSettingTab {
       );
 
     // ── AI provider ────────────────────────────────────────────────────────
-    containerEl.createEl('h3', { text: 'AI provider (inline rewrites)' });
-    containerEl.createEl('p', {
-      text: 'Configure an AI provider to use the "Rewrite" button in the side panel.',
-      cls: 'setting-item-description',
-    });
+    new Setting(containerEl)
+      .setName('AI provider (inline rewrites)')
+      .setDesc('Configure an AI provider to use the "Rewrite" button in the side panel.')
+      .setHeading();
 
     let modelTextComp: TextComponent;
 
@@ -106,7 +105,7 @@ export class UnslopSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           });
         text.inputEl.type = 'password';
-        text.inputEl.style.width = '100%';
+        text.inputEl.addClass('unslop-input-full');
       });
 
     new Setting(containerEl)
@@ -121,7 +120,7 @@ export class UnslopSettingTab extends PluginSettingTab {
             this.plugin.settings.aiModel = value.trim() || DEFAULT_MODELS[selectedProvider];
             await this.plugin.saveSettings();
           });
-        text.inputEl.style.width = '100%';
+        text.inputEl.addClass('unslop-input-full');
       });
 
     if (selectedProvider === 'openrouter' || selectedProvider === 'mistral' || selectedProvider === 'openai') {
@@ -136,16 +135,15 @@ export class UnslopSettingTab extends PluginSettingTab {
               this.plugin.settings.aiBaseUrl = value.trim();
               await this.plugin.saveSettings();
             });
-          text.inputEl.style.width = '100%';
+          text.inputEl.addClass('unslop-input-full');
         });
     }
 
     // ── Custom rules ───────────────────────────────────────────────────────
-    containerEl.createEl('h3', { text: 'Custom rules' });
-    containerEl.createEl('p', {
-      text: 'Add your own phrases to flag. They will appear in the side panel alongside built-in findings.',
-      cls: 'setting-item-description',
-    });
+    new Setting(containerEl)
+      .setName('Custom rules')
+      .setDesc('Add your own phrases to flag. They will appear in the side panel alongside built-in findings.')
+      .setHeading();
 
     this.renderCustomRules(containerEl);
 
@@ -212,8 +210,7 @@ export class UnslopSettingTab extends PluginSettingTab {
             })
         );
 
-      setting.settingEl.style.flexWrap = 'wrap';
-      setting.settingEl.style.gap = '6px';
+      setting.settingEl.addClass('unslop-rule-setting');
     }
   }
 }
