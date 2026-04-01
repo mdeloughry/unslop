@@ -96,7 +96,7 @@ export class UnslopSettingTab extends PluginSettingTab {
       }))
       .addText(text => {
         text
-          .setPlaceholder('sk-...') // eslint-disable-line obsidianmd/ui/sentence-case -- API key format, not prose
+          .setPlaceholder('Paste your key here')
           .setValue(this.plugin.settings.aiApiKey)
           .onChange(async (value) => {
             this.plugin.settings.aiApiKey = value.trim();
@@ -127,7 +127,7 @@ export class UnslopSettingTab extends PluginSettingTab {
         .setDesc('Override the API base URL — useful for proxies or self-hosted models.')
         .addText(text => {
           text
-            .setPlaceholder('https://...') // eslint-disable-line obsidianmd/ui/sentence-case -- URL format, not prose
+            .setPlaceholder('https://example.com')
             .setValue(this.plugin.settings.aiBaseUrl)
             .onChange(async (value) => {
               this.plugin.settings.aiBaseUrl = value.trim();

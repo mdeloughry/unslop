@@ -979,14 +979,16 @@ var UnslopView = class extends import_obsidian2.ItemView {
   getIcon() {
     return "scan-text";
   }
-  async onOpen() {
+  onOpen() {
     const root = this.containerEl.children[1];
     root.empty();
     root.addClass("unslop-root");
     this.contentEl2 = root.createDiv({ cls: "unslop-content" });
     this.renderEmpty();
+    return Promise.resolve();
   }
-  async onClose() {
+  onClose() {
+    return Promise.resolve();
   }
   showResult(result, content, filePath) {
     this.result = result;
@@ -1002,7 +1004,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
   renderEmpty() {
     this.contentEl2.empty();
     const empty = this.contentEl2.createDiv({ cls: "unslop-empty" });
-    empty.createEl("p", { text: 'Run "Unslop: Analyze note" to scan the active document.' });
+    empty.createEl("p", { text: 'Run the "analyze note" command to scan the active document.' });
   }
   renderResult() {
     var _a, _b, _c;
@@ -1025,7 +1027,7 @@ var UnslopView = class extends import_obsidian2.ItemView {
       this.clearResult();
     });
     if (result.findings.length === 0) {
-      this.contentEl2.createDiv({ cls: "unslop-empty" }).createEl("p", { text: "\u2713 No issues found." });
+      this.contentEl2.createDiv({ cls: "unslop-empty" }).createEl("p", { text: "No issues found." });
       return;
     }
     const groups = /* @__PURE__ */ new Map();
@@ -1250,7 +1252,7 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
       frag.createEl("a", { text: docsUrl, href: docsUrl });
       frag.appendText(".");
     })).addText((text) => {
-      text.setPlaceholder("sk-...").setValue(this.plugin.settings.aiApiKey).onChange(async (value) => {
+      text.setPlaceholder("Paste your key here").setValue(this.plugin.settings.aiApiKey).onChange(async (value) => {
         this.plugin.settings.aiApiKey = value.trim();
         await this.plugin.saveSettings();
       });
@@ -1267,7 +1269,7 @@ var UnslopSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
     if (selectedProvider === "openrouter" || selectedProvider === "mistral" || selectedProvider === "openai") {
       new import_obsidian3.Setting(containerEl).setName("Base URL (optional)").setDesc("Override the API base URL \u2014 useful for proxies or self-hosted models.").addText((text) => {
-        text.setPlaceholder("https://...").setValue(this.plugin.settings.aiBaseUrl).onChange(async (value) => {
+        text.setPlaceholder("https://example.com").setValue(this.plugin.settings.aiBaseUrl).onChange(async (value) => {
           this.plugin.settings.aiBaseUrl = value.trim();
           await this.plugin.saveSettings();
         });

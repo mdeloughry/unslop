@@ -38,15 +38,16 @@ export class UnslopView extends ItemView {
   getDisplayText(): string { return 'Unslop'; }
   getIcon(): string { return 'scan-text'; }
 
-  async onOpen(): Promise<void> {
+  onOpen(): Promise<void> {
     const root = this.containerEl.children[1] as HTMLElement;
     root.empty();
     root.addClass('unslop-root');
     this.contentEl2 = root.createDiv({ cls: 'unslop-content' });
     this.renderEmpty();
+    return Promise.resolve();
   }
 
-  async onClose(): Promise<void> {}
+  onClose(): Promise<void> { return Promise.resolve(); }
 
   showResult(result: AnalysisResult, content: string, filePath: string): void {
     this.result = result;
@@ -65,7 +66,7 @@ export class UnslopView extends ItemView {
   private renderEmpty(): void {
     this.contentEl2.empty();
     const empty = this.contentEl2.createDiv({ cls: 'unslop-empty' });
-    empty.createEl('p', { text: 'Run "Unslop: Analyze note" to scan the active document.' }); // eslint-disable-line obsidianmd/ui/sentence-case -- quoting the command name
+    empty.createEl('p', { text: 'Run the "analyze note" command to scan the active document.' });
   }
 
   private renderResult(): void {
@@ -97,7 +98,7 @@ export class UnslopView extends ItemView {
     // ── No findings ───────────────────────────────────────────────────────
     if (result.findings.length === 0) {
       this.contentEl2.createDiv({ cls: 'unslop-empty' })
-        .createEl('p', { text: '✓ No issues found.' }); // eslint-disable-line obsidianmd/ui/sentence-case -- starts after a symbol
+        .createEl('p', { text: 'No issues found.' });
       return;
     }
 
